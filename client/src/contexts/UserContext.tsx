@@ -24,7 +24,7 @@ const UsersProvider = ({ children }: ChildProp) => {
 
   const addNewUser = async (user: Omit<UserType, "_id">): Promise<ErrorOrSuccessReturn> => {
     try{
-      const res = await fetch(`/api/users`, {
+      const res = await fetch(`http://localhost:5500/api/users`, {
         method: "POST",
         headers: {
           "Content-Type":"application/json"
@@ -55,7 +55,7 @@ const UsersProvider = ({ children }: ChildProp) => {
   const logUserIn = async (userLoginInfo: Pick<UserType, 'email' | 'password'>): Promise<ErrorOrSuccessReturn> => {
     try {
       // console.log(userLoginInfo);
-      const res = await fetch(`/api/users/login`, {
+      const res = await fetch(`http://localhost:5500/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type":"application/json"
@@ -86,7 +86,7 @@ const UsersProvider = ({ children }: ChildProp) => {
   }
 
   useEffect(() => {
-    fetch(`/api/users`)
+    fetch(`http://localhost:5500/api/users`)
       .then(res => res.json())
       .then(data => dispatch({
         type: "uploadData",
