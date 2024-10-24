@@ -1,0 +1,55 @@
+Registracija:
+
+Laukai: username, profileImage, password, passwordRepeat.
+Validacija: username ilgis, slaptažodžio sudėtingumas, duomenų unikalumas.
+Errorų ir sėkmės pranešimai.
+
+Prisijungimas:
+
+Laukai: username, password.
+Errorų ir sėkmės pranešimai.
+
+Profilis:
+
+Vartotojo informacijos peržiūra ir redagavimas.
+Duomenų validacija ir atnaujinimas.
+
+Visi vartotojai:
+
+Vartotojų sąrašas su navigacija į jų profilius.
+Specifinis vartotojo profilis:
+
+Informacija apie vartotoją.
+Mygtukas "Pradėti pokalbį" (jei pokalbis neegzistuoja) arba "Tęsti pokalbį" (jei egzistuoja).
+
+Pokalbiai:
+
+Visi vartotojo pokalbiai.
+Informacija apie naujas (neperskaitytas) žinutes.
+
+Pokalbis:
+
+Žinučių siuntimas ir peržiūra.
+Like'inimas, siuntėjo informacija.
+
+
+
+Funkcinė struktūra:
+
+Vartotojų autentifikacija:
+
+Registracija (naujo vartotojo kūrimas).
+Prisijungimas (esamo vartotojo autentifikacija).
+
+Vartotojų funkcijos:
+
+Peržiūra ir redagavimas (profilio atnaujinimas: nuotrauka, slaptažodis, vardas).
+Vartotojų sąrašas (visi vartotojai).
+Specifinio vartotojo profilis.
+
+Pokalbiai:
+
+Naujo pokalbio sukūrimas.
+Žinučių siuntimas, rodymas, laiko ir siuntėjo informacija.
+Pokalbio ištrynimas.
+Žinučių like'inimas.
