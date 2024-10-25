@@ -19,15 +19,42 @@ const StyledHeader = styled.header`
   }
 
   nav {
-    a {
+    display: flex;
+    align-items: center;
+
+    a, button {
       margin-left: 20px;
       font-size: 1.2rem;
       color: #333;
       text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+
       &:hover {
         text-decoration: underline;
       }
     }
+
+    button {
+      color: #007bff;
+    }
+  }
+`;
+
+const UserContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+
+  span {
+    font-size: 1.2rem;
   }
 `;
 
@@ -41,8 +68,11 @@ const Header = () => {
         <Link to="/">Home</Link>
         {loggedInUser ? (
           <>
+          <UserContainer>
+            <img src={loggedInUser.profileImage || 'default-avatar.png'} alt="Profile" />
             <Link to="/profile">{loggedInUser.username}</Link>
             <button onClick={logout}>Logout</button>
+          </UserContainer>  
           </>
         ) : (
           <>
