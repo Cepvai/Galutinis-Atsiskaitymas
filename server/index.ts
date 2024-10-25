@@ -132,3 +132,31 @@ app.post('/users', checkUniqueUser, async (req: Request, res: Response) => {
       client?.close();
     }
   });
+
+  // Profilio informacijos redagavimas
+  app.patch('/api/users/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const client = await MongoClient.connect(DB_CONNECTION);
+    try {
+      const updatedData = { ...req.body };
+      if (updatedData.password) {
+        updatedData.password = bcrypt.hashSync(updatedData.password, 10);
+      }
+  
+      const result = await client.db('chatas').collection<UserType>('users').updateOne(
+        { _id: id },
+        { $set: updatedData }
+      );
+  
+      if (result.modifiedCount === 0) {
+        res.status(404).send({ error: 'Vartotojas nerastas arba nebuvo atnaujintas' });
+      } else {
+        res.status(200).send({ success: 'Profilis atnaujintas sėkmingai!' });
+      }
+    } catch (err) {
+      res.status(500).send({ error: 'Serverio klaida atnaujinant profilį' });
+    } finally {
+      client?.close();
+    }
+  });
+  
