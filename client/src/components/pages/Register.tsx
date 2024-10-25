@@ -17,7 +17,8 @@ const Register = () => {
       email: '',
       username: '',
       password: '',
-      passwordRepeat: ''
+      passwordRepeat: '',
+      profileImage: ''
     },
     validationSchema: Yup.object({
       email: Yup.string()
