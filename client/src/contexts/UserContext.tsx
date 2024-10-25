@@ -52,7 +52,7 @@ const UsersProvider = ({ children }: ChildProp) => {
     } 
   }
 
-  const logUserIn = async (userLoginInfo: Pick<UserType, 'email' | 'password'>): Promise<ErrorOrSuccessReturn> => {
+  const logUserIn = async (userLoginInfo: Pick<UserType, 'username' | 'password'>): Promise<ErrorOrSuccessReturn> => {
     try {
       // console.log(userLoginInfo);
       const res = await fetch(`http://localhost:5500/api/users/login`, {
@@ -95,8 +95,8 @@ const UsersProvider = ({ children }: ChildProp) => {
       .catch(err => console.error(err));
     const localStorageInfo = localStorage.getItem('savedUserInfo');
     if(localStorageInfo){
-      const userInfo = JSON.parse(localStorageInfo) as Pick<UserType, 'email' | 'password'>;
-      logUserIn({ email: userInfo.email, password: userInfo.password });
+      const userInfo = JSON.parse(localStorageInfo) as Pick<UserType, 'username' | 'password'>;
+      logUserIn({ username: userInfo.username, password: userInfo.password });
     }
   }, []);
 
