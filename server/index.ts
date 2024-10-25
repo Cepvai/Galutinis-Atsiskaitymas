@@ -65,13 +65,13 @@ app.post('/api/users', checkUniqueUser, async (req: Request, res: Response) => {
 app.post('/api/users/login', async (req: Request, res: Response) => {
   const client = await MongoClient.connect(DB_CONNECTION);
   try {
-    const data = await client.db('chatas').collection<UserType>('users').findOne({ email: req.body.email });
+    const data = await client.db('chatas').collection<UserType>('users').findOne({ username: req.body.username });
     if (data === null) {
-      res.status(401).send({ error: 'Vartotojas su tokiu email arba/ir password neegzsituoja.' });
+      res.status(401).send({ error: 'Vartotojas su tokiu username arba/ir password neegzsituoja.' });
     } else {
       const passCheck = bcrypt.compareSync(req.body.password, data.password);
       if (passCheck === false) {
-        res.status(401).send({ error: 'Vartotojas su tokiu email arba/ir password neegzsituoja.' });
+        res.status(401).send({ error: 'Vartotojas su tokiu username arba/ir password neegzsituoja.' });
       } else {
         res.send(data);  // Grąžiname vartotojo duomenis, jei slaptažodis atitinka
       }

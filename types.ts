@@ -10,7 +10,7 @@ export type UsersContextTypes = {
   users: UserType[],
   addNewUser: (user: Omit<UserType, "_id">) => Promise<ErrorOrSuccessReturn>,
   loggedInUser: UserType | null,
-  logUserIn: (userLoginInfo: Pick<UserType, "email" | "password">) => Promise<ErrorOrSuccessReturn>,
+  logUserIn: (userLoginInfo: Pick<UserType, "username" | "password">) => Promise<ErrorOrSuccessReturn>,
   logout: () => void
 }
 export type ErrorOrSuccessReturn = { error: string } | { success: string };
