@@ -1,5 +1,8 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import UsersContext from "../../../contexts/UserContext";
+import { UsersContextTypes } from "../../../../../types";
 
 const StyledHeader = styled.header`
   display: flex;
@@ -29,13 +32,24 @@ const StyledHeader = styled.header`
 `;
 
 const Header = () => {
+  const { loggedInUser, logout } = useContext(UsersContext) as UsersContextTypes;
+
   return (
     <StyledHeader>
       <h1>Chatas</h1>
       <nav>
         <Link to="/">Home</Link>
-        <Link to="/register">Register</Link>
-        <Link to="/login">Login</Link>
+        {loggedInUser ? (
+          <>
+            <Link to="/profile">{loggedInUser.username}</Link>
+            <button onClick={logout}>Logout</button>
+          </>
+        ) : (
+          <>
+            <Link to="/register">Register</Link>
+            <Link to="/login">Login</Link>
+          </>
+        )}
       </nav>
     </StyledHeader>
   );

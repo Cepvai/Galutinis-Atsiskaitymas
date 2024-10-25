@@ -4,7 +4,7 @@ export type UserType = {
   username: string,
   password: string,
   password_visible: string,
-  role: "user" | "admin"
+  profileImage: string;
 };
 export type UsersContextTypes = {
   users: UserType[],
@@ -12,6 +12,7 @@ export type UsersContextTypes = {
   loggedInUser: UserType | null,
   logUserIn: (userLoginInfo: Pick<UserType, "username" | "password">) => Promise<ErrorOrSuccessReturn>,
   logout: () => void
+  updateUserProfile: (updatedUser: UserType) => Promise<ErrorOrSuccessReturn>;
 }
 export type ErrorOrSuccessReturn = { error: string } | { success: string };
 

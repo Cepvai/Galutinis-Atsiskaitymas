@@ -115,3 +115,20 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Server is running and ready!');
 });
 
+app.post('/users', checkUniqueUser, async (req: Request, res: Response) => {
+    const client = await MongoClient.connect(DB_CONNECTION);
+    try {
+      const userToInsert = {
+        ...req.body,
+        password: bcrypt.hashSync(req.body.password, 10),
+        _id: generateID(),
+        profileImage: req.body.profileImage || 'default-profile.png'  // Jei neįvesta, naudokime numatytąją nuotrauką
+      };
+      const data = await client.db('chatas').collection('users').insertOne(userToInsert);
+      res.send(userToInsert);
+    } catch(err) {
+      res.status(500).send({ error: err });
+    } finally {
+      client?.close();
+    }
+  });

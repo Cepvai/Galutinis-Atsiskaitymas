@@ -35,30 +35,36 @@ const Register = () => {
         ).required('Šis laukas yra privalomas.'),
       passwordRepeat: Yup.string()
         .oneOf([Yup.ref('password')], 'Passwords must match')
-        .required('Field must be filled')
+        .required('Field must be filled'),
+      profileImage: Yup.string()
+        .url('Privalo būti teisingas URL.')
+        .nullable()
     }),
     onSubmit: async (values) => {
-      // console.log(values);
-      const registerResponse = await addNewUser({
-        username: values.username,
-        email: values.email,
-        password: values.password,
-        password_visible: values.password,
-        role: 'user'
-      });
-      // Type Guard - tikrina ar raktinis žodis "error" yra "registerResponse" objekto viduje
-      if("error" in registerResponse){ // error yra (email arba user jau panaudotas)
-        // console.log(registerResponse);
-        setRegisterMessage(registerResponse.error);
-      } else { // error nėra, viskas sėkmingai
-        // console.log(registerResponse);
-        setRegisterMessage(registerResponse.success);
-        setTimeout(() => {
-          navigate('/');
-        }, 3000);
+        try {
+          // Paruošiame vartotojo duomenis su numatytaisiais laukais
+          const newUser = {
+            username: values.username,
+            email: values.email,
+            password: values.password,
+            profileImage: values.profileImage || '',
+            password_visible: values.password,
+          };
+  
+          const registerResponse = await addNewUser(newUser);
+          if ("error" in registerResponse) {
+            setRegisterMessage(registerResponse.error);
+          } else {
+            setRegisterMessage(registerResponse.success);
+            setTimeout(() => {
+              navigate('/login');  // Po registracijos nukreipiame į prisijungimo puslapį
+            }, 3000);
+          }
+        } catch (err) {
+          console.error(err);
+        }
       }
-    }
-  });
+    });
 
   return (
     <section>
@@ -119,6 +125,17 @@ const Register = () => {
             formik.touched.passwordRepeat && formik.errors.passwordRepeat 
             && <p>{formik.errors.passwordRepeat}</p>
           }
+        </div>
+        <div>
+          <label htmlFor="profileImage">Profilio nuotraukos URL:</label>
+          <input
+            type="url"
+            name="profileImage" id="profileImage"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.profileImage}
+          />
+          {formik.touched.profileImage && formik.errors.profileImage && <p>{formik.errors.profileImage}</p>}
         </div>
         <input type="submit" value="Registruotis" />
       </form>

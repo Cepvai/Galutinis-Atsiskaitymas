@@ -36,7 +36,7 @@ const Login = () => {
           } else {
             setLoginMessage(loginResponse.success);
             setTimeout(() => {
-              navigate('/profile');  // Galima nukreipti į profilį arba kitą puslapį
+              navigate("/");  // Galima nukreipti į home arba kitą puslapį
             }, 3000);
           }
         } catch(err) {

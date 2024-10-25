@@ -4,7 +4,8 @@ import { UserType, UsersContextTypes, ErrorOrSuccessReturn } from '../../../type
 type ChildProp = { children: ReactElement };
 type ReducerActionTypeVariations = 
 { type: 'uploadData', allData: UserType[] } | 
-{ type: 'add', data: UserType }
+{ type: 'add', data: UserType } |
+{ type: 'update', data: UserType };
 
 const reducer = (state: UserType[], action: ReducerActionTypeVariations): UserType[] => {
   switch(action.type){
@@ -12,6 +13,8 @@ const reducer = (state: UserType[], action: ReducerActionTypeVariations): UserTy
       return action.allData;
     case "add":
       return [...state, action.data];
+      case "update":
+        return state.map(user => user._id === action.data._id ? action.data : user);
   }
 }
 
@@ -78,7 +81,31 @@ const UsersProvider = ({ children }: ChildProp) => {
       console.error(err);
       return { error: 'Bandant prisijungti, įvyko serverio klaida. Prašome bandyti vėliau.' };
     }
-  }
+  };
+
+  const updateUserProfile = async (updatedUser: UserType): Promise<ErrorOrSuccessReturn> => {
+    try {
+      const res = await fetch(`http://localhost:5500/api/users/${updatedUser._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updatedUser)
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        return { error: error.message || "Įvyko klaida atnaujinant profilį" };
+      } else {
+        const data = await res.json();
+        setLoggedInUser(data); // atnaujinti prisijungusio vartotojo duomenis
+        dispatch({ type: 'update', data });
+        return { success: "Profilis atnaujintas sėkmingai!" };
+      }
+    } catch (err) {
+      console.error(err);
+      return { error: 'Bandant atnaujinti profilį, įvyko serverio klaida.' };
+    }
+  };
 
   const logout = () => {
     setLoggedInUser(null);
@@ -107,7 +134,8 @@ const UsersProvider = ({ children }: ChildProp) => {
         addNewUser,
         loggedInUser,
         logUserIn,
-        logout
+        logout,
+        updateUserProfile
       }}
     >
       {children}
