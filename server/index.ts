@@ -160,3 +160,22 @@ app.post('/users', checkUniqueUser, async (req: Request, res: Response) => {
     }
   });
   
+  // GET užklausa vienam vartotojui pagal ID
+  app.get('/api/users/:id', async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const client = await MongoClient.connect(DB_CONNECTION);
+    try {
+      const user = await client.db('chatas').collection<UserType>('users').findOne({ _id: id });
+  
+      if (!user) {
+        res.status(404).send({ error: 'Vartotojas nerastas' });
+        return;
+      }
+  
+      res.status(200).send(user);
+    } catch (err) {
+      res.status(500).send({ error: 'Serverio klaida gaunant vartotojo duomenis' });
+    } finally {
+      client?.close();
+    }
+  });
