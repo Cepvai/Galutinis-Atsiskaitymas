@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import UsersContext from "../../../contexts/UserContext";
 import { UsersContextTypes } from "../../../../../types";
@@ -60,6 +60,12 @@ const UserContainer = styled.div`
 
 const Header = () => {
   const { loggedInUser, logout } = useContext(UsersContext) as UsersContextTypes;
+  const navigate = useNavigate(); // Navigacijos funkcija
+
+  const handleLogout = () => {
+    logout();
+    navigate('/'); // Naviguojama į pagrindinį puslapį po atsijungimo
+  };
 
   return (
     <StyledHeader>
@@ -68,11 +74,12 @@ const Header = () => {
         <Link to="/">Home</Link>
         {loggedInUser ? (
           <>
-          <UserContainer>
-            <img src={loggedInUser.profileImage || 'default-avatar.png'} alt="Profile" />
-            <Link to="/profile">{loggedInUser.username}</Link>
-            <button onClick={logout}>Logout</button>
-          </UserContainer>  
+            <Link to="/all-users">Visi vartotojai</Link>
+            <UserContainer>
+              <img src={loggedInUser.profileImage || 'default-avatar.png'} alt="Profile" />
+              <Link to="/profile">{loggedInUser.username}</Link>
+              <button onClick={handleLogout}>Logout</button>
+            </UserContainer>
           </>
         ) : (
           <>

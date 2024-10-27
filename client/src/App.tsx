@@ -4,6 +4,8 @@ import Home from "./components/pages/Home";
 import Register from "./components/pages/Register";
 import Login from "./components/pages/Login";
 import Profile from "./components/pages/Profile";
+import AllUsers from "./components/pages/AllUsers";
+import ParticularUser from "./components/pages/ParticularUser";
 
 const App = () => {
   return (
@@ -13,6 +15,8 @@ const App = () => {
         <Route path="/" element={<BaseOutlet />}>
           <Route index element={<Home />} /> 
           <Route path="/profile" element={<Profile />} />
+          <Route path="/all-users" element={<AllUsers />} />
+          <Route path="/users/:id" element={<ParticularUser />} />
         </Route>
       </Routes>
   );
