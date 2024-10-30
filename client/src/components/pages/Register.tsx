@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 
 import UsersContext from "../../contexts/UserContext";
-import { UsersContextTypes } from "../../../../types";
+import { UsersContextTypes } from "../../../../server/types";
 
 const Register = () => {
 
@@ -140,7 +140,7 @@ const Register = () => {
         <input type="submit" value="Registruotis" />
       </form>
       { registerMessage && <p>{registerMessage}</p> }
-      <p>Jau turite paskyrą? Eikite <Link to="/prisijungti">prisijungti</Link>.</p>
+      <p>Jau turite paskyrą? Eikite <Link to="/login">prisijungti</Link>.</p>
     </section>
   );
 }

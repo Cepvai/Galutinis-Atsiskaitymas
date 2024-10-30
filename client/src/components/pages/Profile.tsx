@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useContext, useState } from "react";
 import UsersContext from "../../contexts/UserContext";
-import { UsersContextTypes } from "../../../../types";
+import { UsersContextTypes } from "../../../../server/types";
 
 const Profile = () => {
   const { loggedInUser, updateUserProfile } = useContext(UsersContext) as UsersContextTypes;

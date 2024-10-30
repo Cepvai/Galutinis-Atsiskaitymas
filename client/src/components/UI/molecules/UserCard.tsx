@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { UserType } from "../../../../../types";
+import { UserType } from "../../../../../server/types";
 
 const Card = styled.div`
   width: 150px;

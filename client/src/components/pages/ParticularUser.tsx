@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { UserType } from "../../../../types";
+import { UserType } from "../../../../server/types";
 import styled from "styled-components";
+import UsersContext from "../../contexts/UserContext";
 
 const UserProfile = styled.div`
   text-align: center;
@@ -10,13 +11,11 @@ const UserProfile = styled.div`
     width: 100px;
     height: 100px;
   }
-
   .username {
     font-size: 2rem;
     font-weight: bold;
     margin-top: 10px;
   }
-
   .start-chat-button {
     margin-top: 20px;
     padding: 10px 20px;
@@ -33,7 +32,8 @@ const ParticularUser = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [user, setUser] = useState<UserType | null>(null);
-
+  const { loggedInUser } = useContext(UsersContext) || {};
+  
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -49,23 +49,27 @@ const ParticularUser = () => {
   }, [id]);
 
   const startChat = async () => {
+    if (!loggedInUser || !id) return;
+
     try {
-      const loggedInUserId = "currentLoggedInUserId";
-      const response = await fetch("http://localhost:5500/api/conversations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user1Id: loggedInUserId, user2Id: id })
-      });
-      const data = await response.json();
-      if (data.conversationId) {
-        navigate(`/chat/${data.conversationId}`);
-      }
-    } catch (err) {
-      console.error("Klaida pradedant pokalbį:", err);
+       const response = await fetch("http://localhost:5500/api/conversations/check-or-create", {
+          method: "POST",
+          headers: {
+             "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user1Id: loggedInUser._id, user2Id: id }),
+       });
+       
+       const { conversationId } = await response.json();
+       if (response.ok) {
+          navigate(`/chat/${conversationId}`);
+       } else {
+          console.error("Klaida nukreipiant į pokalbį:", response.statusText);
+       }
+    } catch (error) {
+       console.error("Klaida pradedant pokalbį:", error);
     }
-  };
+ };
 
   if (!user) return <p>Kraunama...</p>;
 

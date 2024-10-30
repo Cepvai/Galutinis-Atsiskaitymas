@@ -1,5 +1,5 @@
 import { useReducer, useState, useEffect, createContext, ReactElement } from "react";
-import { UserType, UsersContextTypes, ErrorOrSuccessReturn } from '../../../types';
+import { UserType, UsersContextTypes, ErrorOrSuccessReturn, MessageType, ConversationType } from '../../../server/types';
 
 type ChildProp = { children: ReactElement };
 type ReducerActionTypeVariations = 
@@ -110,7 +110,54 @@ const UsersProvider = ({ children }: ChildProp) => {
   const logout = () => {
     setLoggedInUser(null);
     localStorage.removeItem('savedUserInfo');
-  }
+  };
+
+  const startConversation = async (recipientId: string): Promise<ConversationType | ErrorOrSuccessReturn> => {
+    try {
+      const response = await fetch(`http://localhost:5500/api/conversations`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ user1Id: loggedInUser?._id, user2Id: recipientId })
+      });
+      if (!response.ok) throw new Error("Failed to start conversation.");
+      return await response.json();
+    } catch (err) {
+      console.error("Error starting conversation:", err);
+      return { error: "Nepavyko pradėti pokalbio." };
+    }
+  };
+
+  const sendMessage = async (conversationId: string, message: Omit<MessageType, "_id">): Promise<MessageType | ErrorOrSuccessReturn> => {
+    try {
+      const response = await fetch(`http://localhost:5500/api/conversations/${conversationId}/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(message)
+      });
+      if (!response.ok) throw new Error("Failed to send message.");
+      return await response.json();
+    } catch (err) {
+      console.error("Error sending message:", err);
+      return { error: "Nepavyko išsiųsti žinutės." };
+    }
+  };
+
+  const likeMessage = async (messageId: string): Promise<ErrorOrSuccessReturn> => {
+    try {
+      const response = await fetch(`http://localhost:5500/api/messages/${messageId}/like`, {
+        method: "POST"
+      });
+      if (!response.ok) throw new Error("Failed to like message.");
+      return { success: "Žinutė sėkmingai patiko." };
+    } catch (err) {
+      console.error("Error liking message:", err);
+      return { error: "Nepavyko patikti žinutės." };
+    }
+  };
 
   useEffect(() => {
     fetch(`http://localhost:5500/api/users`)
@@ -135,7 +182,10 @@ const UsersProvider = ({ children }: ChildProp) => {
         loggedInUser,
         logUserIn,
         logout,
-        updateUserProfile
+        updateUserProfile,
+        startConversation,
+        sendMessage,
+        likeMessage
       }}
     >
       {children}

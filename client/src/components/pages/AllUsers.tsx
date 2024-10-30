@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { UserType } from "../../../../types";
+import { UserType } from "../../../../server/types";
 
 const UserCard = styled.div`
   display: flex;
@@ -48,7 +48,7 @@ const AllUsers = () => {
     <div>
       <h2>Visi vartotojai</h2>
       {users.map((user) => (
-        <Link key={user._id} to={`/users/${user._id}`}>
+        <Link key={user._id.toString()} to={`/users/${user._id}`}>
           <UserCard>
             <img src={user.profileImage || "default-profile.png"} alt={user.username} />
             <div className="username">{user.username}</div>

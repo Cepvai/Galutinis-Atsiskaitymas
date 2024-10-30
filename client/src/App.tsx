@@ -6,6 +6,8 @@ import Login from "./components/pages/Login";
 import Profile from "./components/pages/Profile";
 import AllUsers from "./components/pages/AllUsers";
 import ParticularUser from "./components/pages/ParticularUser";
+import ChatPage from "./components/pages/ChatPage";
+import Conversations from "./components/pages/Conversations";
 
 const App = () => {
   return (
@@ -17,6 +19,8 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/all-users" element={<AllUsers />} />
           <Route path="/users/:id" element={<ParticularUser />} />
+          <Route path="/chat/:conversationId" element={<ChatPage />} />
+          <Route path="/conversations" element={<Conversations />} />
         </Route>
       </Routes>
   );

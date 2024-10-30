@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import UsersContext from "../../../contexts/UserContext";
-import { UsersContextTypes } from "../../../../../types";
+import { UsersContextTypes, ConversationType } from "../../../../../server/types";
 
 const StyledHeader = styled.header`
   display: flex;
@@ -60,12 +60,40 @@ const UserContainer = styled.div`
 
 const Header = () => {
   const { loggedInUser, logout } = useContext(UsersContext) as UsersContextTypes;
-  const navigate = useNavigate(); // Navigacijos funkcija
+  const [conversationsCount, setConversationsCount] = useState<number>(0);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate('/'); // Naviguojama į pagrindinį puslapį po atsijungimo
+    navigate('/');
   };
+
+  useEffect(() => {
+    if (!loggedInUser) return;
+
+    const fetchConversationsCount = async () => {
+      try {
+        const response = await fetch(`http://localhost:5500/api/conversations/${loggedInUser._id}`);
+
+        if (response.status === 404) {
+          // Jei pokalbių nėra, nustatome skaičių į 0
+          setConversationsCount(0);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error('Klaida gaunant pokalbių skaičių');
+        }
+
+        const data: ConversationType[] = await response.json();
+        setConversationsCount(data.length);
+      } catch (err) {
+        console.error("Klaida gaunant pokalbių skaičių:", err);
+      }
+    };
+
+    fetchConversationsCount();
+  }, [loggedInUser]);
 
   return (
     <StyledHeader>
@@ -74,6 +102,7 @@ const Header = () => {
         <Link to="/">Home</Link>
         {loggedInUser ? (
           <>
+            <Link to="/conversations">Pokalbiai {conversationsCount > 0 ? `(${conversationsCount})` : ''}</Link>
             <Link to="/all-users">Visi vartotojai</Link>
             <UserContainer>
               <img src={loggedInUser.profileImage || 'default-avatar.png'} alt="Profile" />
@@ -90,6 +119,6 @@ const Header = () => {
       </nav>
     </StyledHeader>
   );
-}
+};
 
 export default Header;
