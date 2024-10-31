@@ -3,11 +3,13 @@ import * as Yup from "yup";
 import { useContext, useState } from "react";
 import UsersContext from "../../contexts/UserContext";
 import { UsersContextTypes } from "../../../../server/types";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const { loggedInUser, updateUserProfile } = useContext(UsersContext) as UsersContextTypes;
   const [updateMessage, setUpdateMessage] = useState("");
-
+  const navigate = useNavigate();
+  
   const formik = useFormik({
     initialValues: {
       username: loggedInUser?.username || "",
@@ -37,19 +39,22 @@ const Profile = () => {
     }),
     onSubmit: async (values) => {
       const updatedUser = {
-        _id: loggedInUser?._id || "", // Ensure _id is passed
+        _id: loggedInUser?._id || "",
         username: values.username,
         email: values.email,
         profileImage: values.profileImage,
-        password: values.password || loggedInUser?.password || "", // Ensure password is always a string
-        password_visible: "", // Assuming empty here, adjust based on your needs
+        password: values.password || loggedInUser?.password || "", // Įrašome šifruotą slaptažodį
+        password_visible: values.password || loggedInUser?.password_visible || "", // Nešifruotas slaptažodis
       };
 
       const response = await updateUserProfile(updatedUser);
       if ("error" in response) {
         setUpdateMessage(response.error);
       } else {
-        setUpdateMessage("Profilis atnaujintas sėkmingai!");
+        setUpdateMessage("Profilis atnaujintas sėkmingai! Tuoj būsite nukelti į Home puslapį.");
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
       }
     }
   });

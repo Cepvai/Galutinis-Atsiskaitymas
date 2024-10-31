@@ -41,30 +41,27 @@ const Register = () => {
         .nullable()
     }),
     onSubmit: async (values) => {
-        try {
-          // Paruošiame vartotojo duomenis su numatytaisiais laukais
-          const newUser = {
-            username: values.username,
-            email: values.email,
-            password: values.password,
-            profileImage: values.profileImage || '',
-            password_visible: values.password,
-          };
-  
-          const registerResponse = await addNewUser(newUser);
-          if ("error" in registerResponse) {
-            setRegisterMessage(registerResponse.error);
-          } else {
-            setRegisterMessage(registerResponse.success);
-            setTimeout(() => {
-              navigate('/login');  // Po registracijos nukreipiame į prisijungimo puslapį
-            }, 3000);
-          }
-        } catch (err) {
-          console.error(err);
-        }
+      // console.log(values);
+      const registerResponse = await addNewUser({
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        password_visible: values.password,
+        profileImage: values.profileImage || '',
+      });
+      // Type Guard - tikrina ar raktinis žodis "error" yra "registerResponse" objekto viduje
+      if("error" in registerResponse){ // error yra (email arba user jau panaudotas)
+        // console.log(registerResponse);
+        setRegisterMessage(registerResponse.error);
+      } else { // error nėra, viskas sėkmingai
+        // console.log(registerResponse);
+        setRegisterMessage(registerResponse.success);
+        setTimeout(() => {
+          navigate('/');
+        }, 3000);
       }
-    });
+    }
+  });
 
   return (
     <section>

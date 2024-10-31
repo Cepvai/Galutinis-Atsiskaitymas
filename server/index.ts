@@ -113,6 +113,39 @@ app.delete('/api/users/:id', async (req: Request, res: Response) => {
   }
 });
 
+// Profilio informacijos redagavimas
+app.patch('/api/users/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const client = await MongoClient.connect(DB_CONNECTION);
+  try {
+    const updatedData: Partial<UserType> = { ...req.body };
+
+    // Jei slaptažodis buvo pakeistas, jį šifruojame ir išsaugome
+    if (updatedData.password) {
+      updatedData.password = bcrypt.hashSync(updatedData.password, 10);
+      updatedData.password_visible = req.body.password; // Išsaugome matomą slaptažodį
+    }
+
+    // Tikriname, ar `id` gali būti konvertuotas į `ObjectId`
+    const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id };
+    
+    const result = await client.db('chatas').collection<UserType>('users').updateOne(
+      filter,
+      { $set: updatedData }
+    );
+
+    if (result.modifiedCount === 0) {
+      res.status(404).json({ error: 'Vartotojas nerastas arba nebuvo atnaujintas' });
+    } else {
+      res.status(200).json({ success: 'Profilis atnaujintas sėkmingai!' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Serverio klaida atnaujinant profilį' });
+  } finally {
+    client.close();
+  }
+});
+
 // Pagrindinis maršrutas testavimui
 app.get('/', (req: Request, res: Response) => {
   res.send('Serveris veikia ir yra paruoštas!');

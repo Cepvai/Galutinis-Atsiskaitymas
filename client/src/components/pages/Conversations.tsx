@@ -80,7 +80,6 @@ const Conversations = () => {
         if (!response.ok) throw new Error('Nepavyko gauti pokalbių');
 
         const data = await response.json();
-        console.log("Fetched conversations with unread status:", data);
         setConversations(data);
 
       } catch (err) {
