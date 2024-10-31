@@ -21,6 +21,9 @@ const MessagesContainer = styled.div`
   padding: 10px;
   background-color: #fff;
   border-radius: 5px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 `;
 
 const Message = styled.div<{ $isOwnMessage: boolean }>`
@@ -30,7 +33,10 @@ const Message = styled.div<{ $isOwnMessage: boolean }>`
   padding: 8px;
   background: ${(props) => (props.$isOwnMessage ? "#e1ffc7" : "#f0f0f0")};
   border-radius: 8px;
-  max-width: 70%;
+  max-width: 90%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 `;
 
 const MessageInfo = styled.div`
@@ -45,6 +51,10 @@ const SenderImage = styled.img`
 
 const MessageText = styled.p`
   margin: 5px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  white-space: pre-wrap;
 `;
 
 const MessageTime = styled.span`
@@ -97,7 +107,7 @@ const ChatPage = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [newMessage, setNewMessage] = useState("");
 
-  // Funkcija, skirta gauti vartotojo informaciją pagal ID
+  // Get user info based on sender ID
   const getSenderInfo = (senderId: string) => {
     return users?.find((user) => user._id === senderId);
   };
@@ -158,7 +168,9 @@ const ChatPage = () => {
       if (!response.ok) throw new Error("Error liking message");
 
       setMessages((prevMessages) =>
-        prevMessages.map((msg) => (msg._id === messageId ? { ...msg, liked: true } : msg))
+        prevMessages.map((msg) =>
+          msg._id === messageId ? { ...msg, liked: !msg.liked } : msg
+        )
       );
     } catch (error) {
       console.error("Error liking message:", error);
@@ -180,12 +192,13 @@ const ChatPage = () => {
                 <strong>{sender?.username || "Nežinomas"}: </strong>
                 <MessageText>{msg.content}</MessageText>
                 <MessageTime>{new Date(msg.sentAt).toLocaleString()}</MessageTime>
-                {!isOwnMessage && (
-                  <LikeButton $liked={msg.liked || false} onClick={() => likeMessage(msg._id)}>
-                    <FaHeart />
-                    Patinka
-                  </LikeButton>
-                )}
+                <LikeButton 
+                  $liked={msg.liked || false} 
+                  onClick={() => !isOwnMessage && likeMessage(msg._id)}
+                  disabled={isOwnMessage}
+                >
+                  <FaHeart />
+                </LikeButton>
               </MessageInfo>
             </Message>
           );
