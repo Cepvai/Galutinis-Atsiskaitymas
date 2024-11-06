@@ -4,46 +4,74 @@ import { useNavigate } from "react-router-dom";
 import { ConversationType, UserType } from "../../../../server/types";
 import styled from "styled-components";
 
+const ProfileContainer = styled.section`
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #1c1c1e;
+  color: #eaeaea;
+`;
+
 const ConversationsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin: 20px;
+  gap: 20px;
+  padding: 30px;
+  background-color: #1c1c1e;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  color: #eaeaea;
 `;
 
 const ConversationItem = styled.div`
-  padding: 15px;
-  border: 2px solid #ccc;
-  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #444;
+  border-radius: 10px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #f9f9f9;
+  background: linear-gradient(135deg, #2e2e2e, #1e1e1e);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 
   &:hover {
-    background-color: #e0e0e0;
+    background-color: #333;
+    box-shadow: 0 8px 16px rgba(0, 123, 255, 0.3);
+  }
+
+  p {
+    margin: 5px 0;
+    color: #dcdcdc;
   }
 `;
 
 const DeleteButton = styled.button`
   background: none;
   border: none;
-  color: red;
+  color: #e74c3c;
   cursor: pointer;
-  font-size: 1rem;
-  margin-left: 10px;
+  font-size: 1.1rem;
+  transition: color 0.3s;
 
   &:hover {
+    color: #ff6b6b;
     text-decoration: underline;
   }
 `;
 
 const UnreadMessage = styled.span`
-  color: red;
+  color: #ff4757;
   font-size: 0.9em;
+  font-weight: bold;
   margin-left: 10px;
+`;
+
+const Strong = styled.strong`
+  font-weight: bold;
+  color: #0056b3; /* Galite pakeisti spalvą */
+  font-size: 1.1em; /* Šiek tiek padidintas dydis */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Pridėtas šešėlis */
 `;
 
 const Conversations = () => {
@@ -60,7 +88,6 @@ const Conversations = () => {
         if (!response.ok) throw new Error("Nepavyko gauti pokalbių");
 
         const data = await response.json();
-       // console.log("Pokalbiai su žinutėmis:", data);
         setConversations(data);
       } catch (error) {
         console.error("Klaida gaunant pokalbius:", error);
@@ -105,6 +132,7 @@ const Conversations = () => {
   };
 
   return (
+    <ProfileContainer>
     <ConversationsContainer>
       <h2>Pokalbiai</h2>
       {conversations.length > 0 ? (
@@ -117,7 +145,7 @@ const Conversations = () => {
               onClick={() => openChat(convo._id.toString())}
             >
               <div>
-                <p>Dalyviai: {names}</p>
+                <p>Bendrauji su: <Strong>{names}</Strong></p>
                 <p>Pradėta: {new Date(convo.createdAt).toLocaleString()}</p>
                 {hasUnreadMessages && <UnreadMessage>Neperskaityta</UnreadMessage>}
               </div>
@@ -136,6 +164,7 @@ const Conversations = () => {
         <p>Nėra pradėtų pokalbių.</p>
       )}
     </ConversationsContainer>
+    </ProfileContainer>
   );
 };
 

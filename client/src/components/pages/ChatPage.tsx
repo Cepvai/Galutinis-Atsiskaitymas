@@ -5,90 +5,138 @@ import UsersContext from "../../contexts/UserContext";
 import { MessageType } from "../../../../server/types";
 import { FaHeart } from "react-icons/fa";
 
+const ProfileContainer = styled.section`
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #1c1c1e;
+  color: #eaeaea;
+`;
+
 const ChatContainer = styled.section`
   max-width: 800px;
   margin: auto;
-  padding: 20px;
-  background: #f4f4f8;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  background: linear-gradient(145deg, #2d2d2f, #1c1c1e);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  color: #eaeaea;
 `;
 
 const MessagesContainer = styled.div`
   max-height: 500px;
   overflow-y: auto;
   margin-bottom: 20px;
-  padding: 10px;
-  background-color: #fff;
-  border-radius: 5px;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
+  padding: 20px;
+  background: #2b2b2d;
+  border-radius: 12px;
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #1c1c1e;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
+    border: 2px solid #1f1fc0;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #888;
+  }
 `;
 
 const Message = styled.div<{ $isOwnMessage: boolean; $isRead: boolean }>`
   display: flex;
   align-items: flex-start;
+  gap: 10px;
   margin-bottom: 10px;
-  padding: 8px;
+  padding: 12px 18px;
   background: ${(props) =>
     props.$isOwnMessage
-      ? "#e1ffc7"
+      ? "linear-gradient(145deg, #4f574e, #8b9789)"
       : props.$isRead
-      ? "#f0f0f0"
-      : "#ffd1d1"}; /* Raudonas fonas neperskaitytoms žinutėms */
-  border-radius: 8px;
-  max-width: 90%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
+      ? "#333"
+      : "#d9534f"};
+  border-radius: 12px;
+  color: #fff;
+  max-width: 80%;
+  align-self: ${(props) => (props.$isOwnMessage ? "flex-end" : "flex-start")};
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  }
 `;
 
 const MessageInfo = styled.div`
-  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
 `;
 
 const SenderImage = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
+  border: 2px solid #007bff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 `;
 
 const MessageText = styled.p`
   margin: 5px 0;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  max-width: 100%;
-  white-space: pre-wrap;
+  font-size: 1rem;
 `;
 
 const MessageTime = styled.span`
-  font-size: 0.8em;
-  color: #555;
+  font-size: 0.8rem;
+  color: #888;
 `;
 
 const InputContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
+  padding: 15px;
+  background: #2d2d2f;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 `;
 
 const MessageInput = styled.input`
   flex: 1;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  background-color: #1f1f21;
+  color: #eaeaea;
+  font-size: 1rem;
+  outline: none;
+
+  &:focus {
+    border-color: #007bff;
+  }
 `;
 
 const SendButton = styled.button`
-  padding: 10px 15px;
+  padding: 12px 20px;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+
   &:hover {
     background-color: #0056b3;
+    transform: translateY(-2px);
   }
 `;
 
@@ -96,13 +144,16 @@ const LikeButton = styled.button<{ $liked: boolean }>`
   background: none;
   border: none;
   cursor: pointer;
+  color: ${(props) => (props.$liked ? "#e74c3c" : "#888")};
   display: flex;
   align-items: center;
-  color: ${(props) => (props.$liked ? "red" : "gray")};
+  font-size: 1.2rem;
+
   &:hover {
-    color: ${(props) => (props.$liked ? "darkred" : "black")};
+    color: ${(props) => (props.$liked ? "#c0392b" : "#555")};
   }
 `;
+
 
 const ChatPage = () => {
   const { conversationId } = useParams<{ conversationId?: string }>();
@@ -206,6 +257,7 @@ const ChatPage = () => {
   };
 
   return (
+    <ProfileContainer>
     <ChatContainer>
       <h2>Pokalbis</h2>
       <MessagesContainer>
@@ -227,7 +279,7 @@ const ChatPage = () => {
                 >
                   <FaHeart />
                 </LikeButton>
-                {!msg.isRead && <span style={{ color: "red", fontSize: "0.8em" }}> Neperskaityta</span>}
+                {!msg.isRead && <span style={{ color: "black", fontSize: "0.8em" }}> Neperskaityta</span>}
               </MessageInfo>
             </Message>
           );
@@ -243,6 +295,7 @@ const ChatPage = () => {
         <SendButton onClick={sendMessage}>Siųsti</SendButton>
       </InputContainer>
     </ChatContainer>
+    </ProfileContainer>
   );
 };
 

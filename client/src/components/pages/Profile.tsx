@@ -4,6 +4,89 @@ import { useContext, useState } from "react";
 import UsersContext from "../../contexts/UserContext";
 import { UsersContextTypes } from "../../../../server/types";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+
+const ProfileContainer = styled.section`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #1c1c1e;
+  color: #eaeaea;
+`;
+
+const ProfileForm = styled.form`
+  width: 100%;
+  max-width: 450px;
+  padding: 2rem;
+  background-color: #2e2e2e;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  color: #fff;
+`;
+
+const Title = styled.h2`
+  text-align: center;
+  color: #e3e3e3;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+`;
+
+const FieldContainer = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const Label = styled.label`
+  display: block;
+  font-size: 0.9rem;
+  color: #bbb;
+  margin-bottom: 0.5rem;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #444;
+  border: 1px solid #555;
+  border-radius: 8px;
+  color: #fff;
+  transition: border-color 0.3s;
+
+  &:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+`;
+
+const ErrorText = styled.p`
+  color: #ff4d4d;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 1rem;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const UpdateMessage = styled.p`
+  text-align: center;
+  color: #80ff80;
+  margin-top: 1.5rem;
+`;
 
 const Profile = () => {
   const { loggedInUser, updateUserProfile } = useContext(UsersContext) as UsersContextTypes;
@@ -43,29 +126,29 @@ const Profile = () => {
         username: values.username,
         email: values.email,
         profileImage: values.profileImage,
-        password: values.password || loggedInUser?.password || "", // Įrašome šifruotą slaptažodį
-        password_visible: values.password || loggedInUser?.password_visible || "", // Nešifruotas slaptažodis
+        password: values.password || loggedInUser?.password || "",
+        password_visible: values.password || loggedInUser?.password_visible || "",
       };
 
       const response = await updateUserProfile(updatedUser);
       if ("error" in response) {
         setUpdateMessage(response.error);
       } else {
-        setUpdateMessage("Profilis atnaujintas sėkmingai! Tuoj būsite nukelti į Home puslapį.");
+        setUpdateMessage("Profilis atnaujintas sėkmingai! Tuoj būsite nukelti į Visi vartotojai puslapį.");
         setTimeout(() => {
-          navigate("/");
+          navigate("/all-users");
         }, 3000);
       }
     }
   });
 
   return (
-    <section>
-      <h2>Profilio informacija</h2>
-      <form onSubmit={formik.handleSubmit}>
-        <div>
-          <label htmlFor="username">Vartotojo vardas:</label>
-          <input
+    <ProfileContainer>
+      <ProfileForm onSubmit={formik.handleSubmit}>
+        <Title>Profilio informacija</Title>
+        <FieldContainer>
+          <Label htmlFor="username">Vartotojo vardas:</Label>
+          <Input
             type="text"
             name="username"
             id="username"
@@ -73,11 +156,11 @@ const Profile = () => {
             onBlur={formik.handleBlur}
             value={formik.values.username}
           />
-          {formik.touched.username && formik.errors.username && <p>{formik.errors.username}</p>}
-        </div>
-        <div>
-          <label htmlFor="email">El. paštas:</label>
-          <input
+          {formik.touched.username && formik.errors.username && <ErrorText>{formik.errors.username}</ErrorText>}
+        </FieldContainer>
+        <FieldContainer>
+          <Label htmlFor="email">El. paštas:</Label>
+          <Input
             type="email"
             name="email"
             id="email"
@@ -85,11 +168,11 @@ const Profile = () => {
             onBlur={formik.handleBlur}
             value={formik.values.email}
           />
-          {formik.touched.email && formik.errors.email && <p>{formik.errors.email}</p>}
-        </div>
-        <div>
-          <label htmlFor="password">Naujas slaptažodis:</label>
-          <input
+          {formik.touched.email && formik.errors.email && <ErrorText>{formik.errors.email}</ErrorText>}
+        </FieldContainer>
+        <FieldContainer>
+          <Label htmlFor="password">Naujas slaptažodis:</Label>
+          <Input
             type="password"
             name="password"
             id="password"
@@ -97,11 +180,11 @@ const Profile = () => {
             onBlur={formik.handleBlur}
             value={formik.values.password}
           />
-          {formik.touched.password && formik.errors.password && <p>{formik.errors.password}</p>}
-        </div>
-        <div>
-          <label htmlFor="passwordRepeat">Pakartokite slaptažodį:</label>
-          <input
+          {formik.touched.password && formik.errors.password && <ErrorText>{formik.errors.password}</ErrorText>}
+        </FieldContainer>
+        <FieldContainer>
+          <Label htmlFor="passwordRepeat">Pakartokite slaptažodį:</Label>
+          <Input
             type="password"
             name="passwordRepeat"
             id="passwordRepeat"
@@ -109,11 +192,11 @@ const Profile = () => {
             onBlur={formik.handleBlur}
             value={formik.values.passwordRepeat}
           />
-          {formik.touched.passwordRepeat && formik.errors.passwordRepeat && <p>{formik.errors.passwordRepeat}</p>}
-        </div>
-        <div>
-          <label htmlFor="profileImage">Profilio nuotraukos URL:</label>
-          <input
+          {formik.touched.passwordRepeat && formik.errors.passwordRepeat && <ErrorText>{formik.errors.passwordRepeat}</ErrorText>}
+        </FieldContainer>
+        <FieldContainer>
+          <Label htmlFor="profileImage">Profilio nuotraukos URL:</Label>
+          <Input
             type="url"
             name="profileImage"
             id="profileImage"
@@ -121,12 +204,12 @@ const Profile = () => {
             onBlur={formik.handleBlur}
             value={formik.values.profileImage}
           />
-          {formik.touched.profileImage && formik.errors.profileImage && <p>{formik.errors.profileImage}</p>}
-        </div>
-        <input type="submit" value="Atnaujinti" />
-      </form>
-      {updateMessage && <p>{updateMessage}</p>}
-    </section>
+          {formik.touched.profileImage && formik.errors.profileImage && <ErrorText>{formik.errors.profileImage}</ErrorText>}
+        </FieldContainer>
+        <SubmitButton type="submit">Atnaujinti</SubmitButton>
+        {updateMessage && <UpdateMessage>{updateMessage}</UpdateMessage>}
+      </ProfileForm>
+    </ProfileContainer>
   );
 };
 

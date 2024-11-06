@@ -12,6 +12,7 @@ export type UsersContextTypes = {
   users: UserType[],
   addNewUser: (user: Omit<UserType, "_id">) => Promise<ErrorOrSuccessReturn>,
   loggedInUser: UserType | null,
+  setLoggedInUser: (user: UserType | null) => void,
   logUserIn: (userLoginInfo: Pick<UserType, "username" | "password">) => Promise<ErrorOrSuccessReturn>,
   logout: () => void
   updateUserProfile: (updatedUser: UserType) => Promise<ErrorOrSuccessReturn>;

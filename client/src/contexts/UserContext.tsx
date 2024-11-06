@@ -3,83 +3,89 @@ import { UserType, UsersContextTypes, ErrorOrSuccessReturn, MessageType, Convers
 
 type ChildProp = { children: ReactElement };
 type ReducerActionTypeVariations = 
-{ type: 'uploadData', allData: UserType[] } | 
-{ type: 'add', data: UserType } |
-{ type: 'update', data: UserType };
+  | { type: 'uploadData', allData: UserType[] }
+  | { type: 'add', data: UserType }
+  | { type: 'update', data: UserType };
 
 const reducer = (state: UserType[], action: ReducerActionTypeVariations): UserType[] => {
-  switch(action.type){
+  switch (action.type) {
     case "uploadData":
       return action.allData;
     case "add":
       return [...state, action.data];
-      case "update":
-        return state.map(user => user._id === action.data._id ? action.data : user);
+    case "update":
+      return state.map(user => user._id === action.data._id ? action.data : user);
+    default:
+      return state;
   }
-}
+};
 
 const UsersContext = createContext<UsersContextTypes | undefined>(undefined);
 
 const UsersProvider = ({ children }: ChildProp) => {
-
   const [users, dispatch] = useReducer(reducer, []);
   const [loggedInUser, setLoggedInUser] = useState<null | UserType>(null);
 
+  // Patikrinti, ar `localStorage` turi `loggedInUser` informaciją, kai aplikacija užkraunama
+  useEffect(() => {
+    const storedUser = localStorage.getItem('loggedInUser');
+    if (storedUser) {
+      setLoggedInUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  // Kiekvieną kartą, kai atnaujinamas `loggedInUser`, išsaugoti jį `localStorage`
+  useEffect(() => {
+    if (loggedInUser) {
+      localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+    } else {
+      localStorage.removeItem('loggedInUser');
+    }
+  }, [loggedInUser]);
+
   const addNewUser = async (user: Omit<UserType, "_id">): Promise<ErrorOrSuccessReturn> => {
-    try{
+    try {
       const res = await fetch(`http://localhost:5500/api/users`, {
         method: "POST",
         headers: {
-          "Content-Type":"application/json"
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(user)
       });
-      // console.log(res); // res su status ir kitais
-      if(res.status === 409){ // vartotojas įvedė panaudotą username arba email
-        const errMsg = await res.json();
-        // console.log(errMsg, 'error');
-        return errMsg;
+      if (res.status === 409) {
+        return await res.json();
       } else {
         const data = await res.json();
-        // console.log(data, 'sekme');
-        dispatch({
-          type: 'add',
-          data: data
-        });
+        dispatch({ type: 'add', data });
         setLoggedInUser(data);
         return { success: 'Sėkmingai prisiregistruota' };
       }
-    } catch(err) {
+    } catch (err) {
       console.error(err);
-      return { error: 'Bandant atsiūsti duomenis, įvyko serverio klaida. Prašome bandyti vėliau.' };
-    } 
-  }
+      return { error: 'Serverio klaida. Bandykite vėliau.' };
+    }
+  };
 
   const logUserIn = async (userLoginInfo: Pick<UserType, 'username' | 'password'>): Promise<ErrorOrSuccessReturn> => {
     try {
-      // console.log(userLoginInfo);
       const res = await fetch(`http://localhost:5500/api/users/login`, {
         method: "POST",
         headers: {
-          "Content-Type":"application/json"
+          "Content-Type": "application/json"
         },
         body: JSON.stringify(userLoginInfo)
       });
-      // console.log(res);
-      if(res.status === 401){ // neteisingos prisijungimo įvestys
-        const error = await res.json();
-        // console.log(error);
-        return error;
-      } else { // teisingos prisijungimo įvestys
+      if (res.status === 401) {
+        return await res.json();
+      } else {
         const data = await res.json();
-        // console.log(data);
         setLoggedInUser(data);
-        localStorage.setItem('savedUserInfo', JSON.stringify(userLoginInfo));
-        return { success: 'Prisijungimas sėkmingas. Tuoj būsite nukelti į Home puslapį.' }
+        localStorage.setItem('loggedInUser', JSON.stringify(data)); // Saugo `localStorage`
+        return { success: 'Prisijungimas sėkmingas. Tuoj būsite nukelti į Visi vartotojai puslapį.' };
       }
-    } catch(err) {
+    } catch (err) {
       console.error(err);
-      return { error: 'Bandant prisijungti, įvyko serverio klaida. Prašome bandyti vėliau.' };
+      return { error: 'Serverio klaida. Bandykite vėliau.' };
     }
   };
 
@@ -97,19 +103,19 @@ const UsersProvider = ({ children }: ChildProp) => {
         return { error: error.message || "Įvyko klaida atnaujinant profilį" };
       } else {
         const data = await res.json();
-        setLoggedInUser(data); // atnaujinti prisijungusio vartotojo duomenis
+        setLoggedInUser(data);
         dispatch({ type: 'update', data });
         return { success: "Profilis atnaujintas sėkmingai!" };
       }
     } catch (err) {
       console.error(err);
-      return { error: 'Bandant atnaujinti profilį, įvyko serverio klaida.' };
+      return { error: 'Serverio klaida.' };
     }
   };
 
   const logout = () => {
     setLoggedInUser(null);
-    localStorage.removeItem('savedUserInfo');
+    localStorage.removeItem('loggedInUser'); // Ištrina `localStorage`
   };
 
   const startConversation = async (recipientId: string): Promise<ConversationType | ErrorOrSuccessReturn> => {
@@ -122,7 +128,7 @@ const UsersProvider = ({ children }: ChildProp) => {
             body: JSON.stringify({ user1Id: loggedInUser?._id, user2Id: recipientId })
         });
         if (!response.ok) throw new Error("Failed to start conversation.");
-
+  
         const conversation = await response.json();
         
         return { ...conversation, hasUnreadMessages: true }; // Pridedame hasUnreadMessages lauką
@@ -130,9 +136,9 @@ const UsersProvider = ({ children }: ChildProp) => {
         console.error("Error starting conversation:", err);
         return { error: "Nepavyko pradėti pokalbio." };
     }
-};
-
-
+  };
+  
+  
   const sendMessage = async (conversationId: string, message: Omit<MessageType, "_id">): Promise<MessageType | ErrorOrSuccessReturn> => {
     try {
       const response = await fetch(`http://localhost:5500/api/conversations/${conversationId}/messages`, {
@@ -149,7 +155,7 @@ const UsersProvider = ({ children }: ChildProp) => {
       return { error: "Nepavyko išsiųsti žinutės." };
     }
   };
-
+  
   const likeMessage = async (messageId: string): Promise<ErrorOrSuccessReturn> => {
     try {
       const response = await fetch(`http://localhost:5500/api/messages/${messageId}/like`, {
@@ -162,7 +168,7 @@ const UsersProvider = ({ children }: ChildProp) => {
       return { error: "Nepavyko patikti žinutės." };
     }
   };
-
+  
   useEffect(() => {
     fetch(`http://localhost:5500/api/users`)
     .then(res => res.json())
@@ -180,13 +186,14 @@ const UsersProvider = ({ children }: ChildProp) => {
       logUserIn({ username: userInfo.username, password: userInfo.password });
     }
   }, []);
-
+  
   return(
     <UsersContext.Provider
       value={{
         users,
         addNewUser,
         loggedInUser,
+        setLoggedInUser,
         logUserIn,
         logout,
         updateUserProfile,
@@ -197,8 +204,8 @@ const UsersProvider = ({ children }: ChildProp) => {
     >
       {children}
     </UsersContext.Provider>
-  )
-}
+  );
+  };
 
 export { UsersProvider };
 export default UsersContext;

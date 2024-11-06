@@ -9,13 +9,15 @@ const StyledHeader = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  background-color: #f8f9fa;
-  border-bottom: 2px solid #ccc;
+  background-color: #2d2d2d;
+  color: #e3e3e3;
+  border-bottom: 2px solid #444;
 
   h1 {
     font-size: 2rem;
     font-weight: bold;
     margin: 0;
+    color: #007bff;
   }
 
   nav {
@@ -24,14 +26,16 @@ const StyledHeader = styled.header`
 
     a, button {
       margin-left: 20px;
-      font-size: 1.2rem;
-      color: #333;
+      font-size: 1rem;
+      color: #bbb;
       text-decoration: none;
       background: none;
       border: none;
       cursor: pointer;
+      transition: color 0.3s;
 
       &:hover {
+        color: #007bff;
         text-decoration: underline;
       }
     }
@@ -47,14 +51,16 @@ const UserContainer = styled.div`
   align-items: center;
 
   img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    margin-right: 8px;
+    margin-left: 20px;
+    border: 2px solid #555;
   }
 
-  span {
+  span, a {
     font-size: 1.2rem;
+    color: #e3e3e3;
   }
 `;
 
@@ -98,7 +104,6 @@ const Header = () => {
     <StyledHeader>
       <h1>Chatas</h1>
       <nav>
-        <Link to="/">Home</Link>
         {loggedInUser ? (
           <>
             <Link to="/conversations">Pokalbiai {conversationsCount > 0 ? `(${conversationsCount})` : ''}</Link>
