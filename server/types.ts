@@ -27,15 +27,15 @@ export type MessageType = {
   senderId: string;
   recipientId: string;
   content: string;
-  sentAt: string; // Gali būti ir Date tipo, jei naudojate laiką Date formatu
+  sentAt: string; 
   liked?: boolean;
+  isRead: boolean;
 };
 
 // Conversation type
 export type ConversationType = {
   _id: string;
-  participants: string[]; // Dalyviai kaip userId sąrašas
-  messages: MessageType[]; // Žinučių masyvas
-  createdAt: string; // Gali būti ir Date tipo
-  hasUnreadMessages?: boolean;
+  participants: (string | ObjectId)[];
+  messages: MessageType[];
+  createdAt: Date;
 };

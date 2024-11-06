@@ -114,20 +114,24 @@ const UsersProvider = ({ children }: ChildProp) => {
 
   const startConversation = async (recipientId: string): Promise<ConversationType | ErrorOrSuccessReturn> => {
     try {
-      const response = await fetch(`http://localhost:5500/api/conversations`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user1Id: loggedInUser?._id, user2Id: recipientId })
-      });
-      if (!response.ok) throw new Error("Failed to start conversation.");
-      return await response.json();
+        const response = await fetch(`http://localhost:5500/api/conversations`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ user1Id: loggedInUser?._id, user2Id: recipientId })
+        });
+        if (!response.ok) throw new Error("Failed to start conversation.");
+
+        const conversation = await response.json();
+        
+        return { ...conversation, hasUnreadMessages: true }; // Pridedame hasUnreadMessages lauką
     } catch (err) {
-      console.error("Error starting conversation:", err);
-      return { error: "Nepavyko pradėti pokalbio." };
+        console.error("Error starting conversation:", err);
+        return { error: "Nepavyko pradėti pokalbio." };
     }
-  };
+};
+
 
   const sendMessage = async (conversationId: string, message: Omit<MessageType, "_id">): Promise<MessageType | ErrorOrSuccessReturn> => {
     try {
@@ -161,11 +165,14 @@ const UsersProvider = ({ children }: ChildProp) => {
 
   useEffect(() => {
     fetch(`http://localhost:5500/api/users`)
-      .then(res => res.json())
-      .then(data => dispatch({
+    .then(res => res.json())
+    .then(data => {
+      //console.log("Gauti vartotojai:", data);
+      dispatch({
         type: "uploadData",
         allData: data
-      }))
+      });
+    })
       .catch(err => console.error(err));
     const localStorageInfo = localStorage.getItem('savedUserInfo');
     if(localStorageInfo){

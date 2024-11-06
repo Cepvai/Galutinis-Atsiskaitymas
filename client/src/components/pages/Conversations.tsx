@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import UsersContext from "../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import { ConversationType, UserType } from "../../../../server/types";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 const ConversationsContainer = styled.div`
   display: flex;
@@ -11,7 +11,7 @@ const ConversationsContainer = styled.div`
   margin: 20px;
 `;
 
-const ConversationItem = styled.div<{ hasUnreadMessages?: boolean }>`
+const ConversationItem = styled.div`
   padding: 15px;
   border: 2px solid #ccc;
   border-radius: 8px;
@@ -22,28 +22,9 @@ const ConversationItem = styled.div<{ hasUnreadMessages?: boolean }>`
   background-color: #f9f9f9;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 
-  ${(props) =>
-    props.hasUnreadMessages &&
-    css`
-      background-color: #ffecec;
-      border-color: #ff4d4d;
-      font-weight: bold;
-      box-shadow: 0px 4px 12px rgba(255, 0, 0, 0.2);
-    `}
-
   &:hover {
-    background-color: ${(props) => (props.hasUnreadMessages ? '#ffcccc' : '#e0e0e0')};
+    background-color: #e0e0e0;
   }
-`;
-
-const UnreadBadge = styled.span`
-  background-color: #ff4d4d;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: bold;
-  margin-right: 10px;
 `;
 
 const DeleteButton = styled.button`
@@ -59,6 +40,12 @@ const DeleteButton = styled.button`
   }
 `;
 
+const UnreadMessage = styled.span`
+  color: red;
+  font-size: 0.9em;
+  margin-left: 10px;
+`;
+
 const Conversations = () => {
   const { loggedInUser, users } = useContext(UsersContext) || {};
   const [conversations, setConversations] = useState<ConversationType[]>([]);
@@ -70,20 +57,13 @@ const Conversations = () => {
 
       try {
         const response = await fetch(`http://localhost:5500/api/conversations/${loggedInUser._id}`);
-        
-        if (response.status === 404) {
-          console.warn("Vartotojas neturi pradėtų pokalbių.");
-          setConversations([]);  // Nustatome, kad pokalbių nėra
-          return;
-        }
-        
-        if (!response.ok) throw new Error('Nepavyko gauti pokalbių');
+        if (!response.ok) throw new Error("Nepavyko gauti pokalbių");
 
         const data = await response.json();
+       // console.log("Pokalbiai su žinutėmis:", data);
         setConversations(data);
-
-      } catch (err) {
-        console.error("Klaida gaunant pokalbius:", err);
+      } catch (error) {
+        console.error("Klaida gaunant pokalbius:", error);
       }
     };
 
@@ -95,55 +75,63 @@ const Conversations = () => {
   };
 
   const deleteConversation = async (conversationId: string) => {
-    if (!loggedInUser?._id) return;
-
     try {
       const response = await fetch(`http://localhost:5500/api/conversations/${conversationId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      if (!response.ok) throw new Error('Nepavyko ištrinti pokalbio');
+      if (!response.ok) throw new Error("Nepavyko ištrinti pokalbio");
 
-      setConversations(conversations.filter((convo) => convo._id !== conversationId));
-    } catch (err) {
-      console.error("Klaida trynimo metu:", err);
+      setConversations((prevConversations) =>
+        prevConversations.filter((convo) => convo._id.toString() !== conversationId)
+      );
+    } catch (error) {
+      console.error("Klaida trynimo metu:", error);
     }
   };
 
-  const getParticipantNames = (participantIds: string[]) => {
-    if (!users || users.length === 0) return "N/A";
-    return participantIds
-      .filter((id) => id !== loggedInUser?._id)
-      .map((id) => users.find((user: UserType) => user._id === id)?.username || "Nežinomas vartotojas")
+  const getParticipantNamesAndUnreadStatus = (conversation: ConversationType) => {
+    if (!users || users.length === 0) return { names: "N/A", hasUnreadMessages: false };
+
+    const names = conversation.participants
+      .filter((id) => id.toString() !== loggedInUser?._id)
+      .map((id) => users.find((user: UserType) => user._id === id.toString())?.username || "Nežinomas vartotojas")
       .join(", ");
+
+    const hasUnreadMessages = conversation.messages?.some(
+      (msg) => !msg.isRead && msg.senderId !== loggedInUser?._id
+    ) || false;
+
+    return { names, hasUnreadMessages };
   };
 
   return (
     <ConversationsContainer>
       <h2>Pokalbiai</h2>
       {conversations.length > 0 ? (
-        conversations.map((convo) => (
-          <ConversationItem
-            key={convo._id}
-            onClick={() => openChat(convo._id)}
-            hasUnreadMessages={convo.hasUnreadMessages}
-          >
-            <div>
-              <p>Dalyviai: {getParticipantNames(convo.participants)}</p>
-              <p>Pradėta: {new Date(convo.createdAt).toLocaleString()}</p>
-            </div>
-            <div>
-              {convo.hasUnreadMessages && <UnreadBadge>Naujos žinutės</UnreadBadge>}
+        conversations.map((convo) => {
+          const { names, hasUnreadMessages } = getParticipantNamesAndUnreadStatus(convo);
+
+          return (
+            <ConversationItem
+              key={convo._id.toString()}
+              onClick={() => openChat(convo._id.toString())}
+            >
+              <div>
+                <p>Dalyviai: {names}</p>
+                <p>Pradėta: {new Date(convo.createdAt).toLocaleString()}</p>
+                {hasUnreadMessages && <UnreadMessage>Neperskaityta</UnreadMessage>}
+              </div>
               <DeleteButton
                 onClick={(e) => {
                   e.stopPropagation();
-                  deleteConversation(convo._id);
+                  deleteConversation(convo._id.toString());
                 }}
               >
                 Trinti
               </DeleteButton>
-            </div>
-          </ConversationItem>
-        ))
+            </ConversationItem>
+          );
+        })
       ) : (
         <p>Nėra pradėtų pokalbių.</p>
       )}

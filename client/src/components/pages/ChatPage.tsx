@@ -26,12 +26,17 @@ const MessagesContainer = styled.div`
   white-space: normal;
 `;
 
-const Message = styled.div<{ $isOwnMessage: boolean }>`
+const Message = styled.div<{ $isOwnMessage: boolean; $isRead: boolean }>`
   display: flex;
   align-items: flex-start;
   margin-bottom: 10px;
   padding: 8px;
-  background: ${(props) => (props.$isOwnMessage ? "#e1ffc7" : "#f0f0f0")};
+  background: ${(props) =>
+    props.$isOwnMessage
+      ? "#e1ffc7"
+      : props.$isRead
+      ? "#f0f0f0"
+      : "#ffd1d1"}; /* Raudonas fonas neperskaitytoms žinutėms */
   border-radius: 8px;
   max-width: 90%;
   word-wrap: break-word;
@@ -112,6 +117,28 @@ const ChatPage = () => {
     return users?.find((user) => user._id === senderId);
   };
 
+  // Mark messages as read (isRead)
+  const markMessagesAsRead = useCallback(async () => {
+    if (!conversationId || !loggedInUser) return;
+
+    try {
+      await fetch(`http://localhost:5500/api/conversations/${conversationId}/markAsRead`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: loggedInUser._id })
+      });
+      
+      // Update messages locally to reflect they are read
+      setMessages(prevMessages => prevMessages.map(msg => ({
+        ...msg,
+        isRead: msg.senderId !== loggedInUser._id ? true : msg.isRead
+      })));
+      
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
+    }
+  }, [conversationId, loggedInUser]);
+
   const fetchMessages = useCallback(async () => {
     if (!conversationId || conversationId === "null") {
       console.error("conversationId is missing. Redirecting to conversations.");
@@ -127,11 +154,12 @@ const ChatPage = () => {
 
       const data = await response.json();
       setMessages(Array.isArray(data) ? data : []);
+      await markMessagesAsRead(); // Mark messages as read
     } catch (error) {
       console.error("Error fetching messages:", error);
       setMessages([]);
     }
-  }, [conversationId, navigate]);
+  }, [conversationId, markMessagesAsRead, navigate]);
 
   useEffect(() => {
     fetchMessages();
@@ -186,7 +214,7 @@ const ChatPage = () => {
           const isOwnMessage = msg.senderId === loggedInUser?._id;
 
           return (
-            <Message key={msg._id} $isOwnMessage={isOwnMessage}>
+            <Message key={msg._id} $isOwnMessage={isOwnMessage} $isRead={msg.isRead}>
               <SenderImage src={sender?.profileImage || "default-profile.png"} alt="siuntėjo profilis" />
               <MessageInfo>
                 <strong>{sender?.username || "Nežinomas"}: </strong>
@@ -199,6 +227,7 @@ const ChatPage = () => {
                 >
                   <FaHeart />
                 </LikeButton>
+                {!msg.isRead && <span style={{ color: "red", fontSize: "0.8em" }}> Neperskaityta</span>}
               </MessageInfo>
             </Message>
           );

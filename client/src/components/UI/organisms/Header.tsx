@@ -76,7 +76,6 @@ const Header = () => {
         const response = await fetch(`http://localhost:5500/api/conversations/${loggedInUser._id}`);
 
         if (response.status === 404) {
-          // Jei pokalbių nėra, nustatome skaičių į 0
           setConversationsCount(0);
           return;
         }
@@ -104,16 +103,17 @@ const Header = () => {
           <>
             <Link to="/conversations">Pokalbiai {conversationsCount > 0 ? `(${conversationsCount})` : ''}</Link>
             <Link to="/all-users">Visi vartotojai</Link>
+            <Link to={`/users/${loggedInUser._id}`}>Specifinis vartotojas</Link>
             <UserContainer>
               <img src={loggedInUser.profileImage || 'default-avatar.png'} alt="Profile" />
               <Link to="/profile">{loggedInUser.username}</Link>
-              <button onClick={handleLogout}>Logout</button>
+              <button onClick={handleLogout}>Atsijungti</button>
             </UserContainer>
           </>
         ) : (
           <>
-            <Link to="/register">Register</Link>
-            <Link to="/login">Login</Link>
+            <Link to="/register">Registruotis</Link>
+            <Link to="/login">Prisijungti</Link>
           </>
         )}
       </nav>
