@@ -482,3 +482,37 @@ app.post('/api/conversations/check-or-create', async (req: Request, res: Respons
     client.close();
   }
 });
+
+
+// Pokalbių pagal vartotojo ID gavimas su žinutėmis
+app.get('/api/conversations/:userId', async (req: Request, res: Response, next: NextFunction) => {
+  const { userId } = req.params;
+  const client = await prisijungtiPrieDB();
+
+  try {
+    const query = ObjectId.isValid(userId) ? { participants: new ObjectId(userId) } : { participants: userId };
+
+    const conversations = await client
+      .db('chatas')
+      .collection('conversations')
+      .aggregate([
+        { $match: query },
+        {
+          $lookup: {
+            from: 'messages',
+            localField: '_id',
+            foreignField: 'conversationId',
+            as: 'messages'
+          }
+        },
+      ])
+      .toArray();
+
+    // Jei pokalbių nėra, grąžiname tuščią sąrašą vietoj klaidos
+    res.status(200).json(conversations);
+  } catch (error) {
+    next(error); // Pateikiame klaidą klaidų tvarkytuvui
+  } finally {
+    client.close();
+  }
+});
