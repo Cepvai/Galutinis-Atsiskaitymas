@@ -36,7 +36,7 @@ const StyledHeader = styled.header`
 
       &:hover {
         color: #007bff;
-        text-decoration: underline;
+        text-decoration: none;
       }
     }
 

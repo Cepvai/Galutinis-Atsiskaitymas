@@ -12,7 +12,7 @@ const ProfileContainer = styled.section`
 `;
 
 const Container = styled.div`
-  max-width: 800px;
+  max-width: 400px;
   margin: auto;
   padding: 20px;
   text-align: center;
@@ -35,7 +35,8 @@ const UserCard = styled.div`
 
   &:hover {
     transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    background-color: #333;
+    box-shadow: 0 8px 16px rgba(0, 123, 255, 0.3);
   }
 
   img {
@@ -85,7 +86,6 @@ const AllUsers = () => {
             <img src={user.profileImage || "default-profile.png"} alt={user.username} />
             <div>
               <div className="username">{user.username}</div>
-              <div className="details">Aktyvus vartotojas</div>
             </div>
           </UserCard>
         </Link>

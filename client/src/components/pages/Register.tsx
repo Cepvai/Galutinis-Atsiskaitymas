@@ -7,7 +7,6 @@ import styled from "styled-components";
 import UsersContext from "../../contexts/UserContext";
 import { UsersContextTypes } from "../../../../server/types";
 
-// Styled components
 const RegisterContainer = styled.section`
   display: flex;
   justify-content: center;
@@ -19,7 +18,7 @@ const RegisterContainer = styled.section`
 
 const RegisterForm = styled.form`
   width: 100%;
-  max-width: 450px;
+  max-width: 400px;
   padding: 2rem;
   background-color: #2e2e2e;
   border-radius: 12px;

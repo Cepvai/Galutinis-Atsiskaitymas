@@ -36,6 +36,7 @@ const ConversationItem = styled.div`
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 
   &:hover {
+    transform: scale(1.05);
     background-color: #333;
     box-shadow: 0 8px 16px rgba(0, 123, 255, 0.3);
   }
