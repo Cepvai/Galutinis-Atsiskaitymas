@@ -48,6 +48,17 @@ const UserProfile = styled.div`
     }
   }
 `;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: #f3f3f3;
+  font-size: 1.5rem;
+`;
+
 const ProfileContainer = styled.section`
   align-items: center;
   height: 100vh;
@@ -98,7 +109,7 @@ const ParticularUser = () => {
     }
   };
 
-  if (!user) return <p>Kraunama...</p>;
+  if (!user) return <LoadingContainer>Kraunama...</LoadingContainer>;
 
   return (
     <ProfileContainer>

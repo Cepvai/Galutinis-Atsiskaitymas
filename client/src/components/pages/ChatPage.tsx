@@ -63,7 +63,7 @@ const Message = styled.div<{ $isOwnMessage: boolean; $isRead: boolean }>`
       ? "linear-gradient(145deg, #4f574e, #8b9789)"
       : props.$isRead
       ? "#333"
-      : "#d9534f"};
+      : "#333"};
   border-radius: 12px;
   color: #fff;
   max-width: 80%;
