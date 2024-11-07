@@ -1,27 +1,31 @@
-Chatas – Pokalbių Sistema
+# Chatas – Pokalbių Sistema
+
 Šis projektas – tai moderni pokalbių programa, kurią sudaro React frontend'as ir Node/Express backend'as su MongoDB duomenų baze.
 
-Turinys
-Pokalbių Sistema
-Reikalavimai
-Projekto Klonavimas
-Frontend (Klientinės dalies) Nustatymai
-Backend (Serverio dalies) Nustatymai
-Vystymas
-Aplikacijos Paleidimas
-Komandos
-Licencija
-Reikalavimai
-Node.js (rekomenduojama v20.6.0 arba naujesnė)
-MongoDB instaliuota arba MongoDB Atlas paskyra
-npm arba yarn paketų tvarkyklė
-Projekto Klonavimas
+## Turinys
+
+1. [Pokalbių Sistema](#pokalbių-sistema)
+2. [Reikalavimai](#reikalavimai)
+3. [Projekto Klonavimas](#projekto-klonavimas)
+4. [Frontend (Klientinės dalies) Nustatymai](#frontend-klientinės-dalies-nustatymai)
+5. [Backend (Serverio dalies) Nustatymai](#backend-serverio-dalies-nustatymai)
+6. [Vystymas](#vystymas)
+7. [Aplikacijos Paleidimas](#aplikacijos-paleidimas)
+8. [Komandos](#komandos)
+9. [Licencija](#licencija)
+
+## Reikalavimai
+
+- **Node.js** (rekomenduojama v20.6.0 arba naujesnė)
+- **MongoDB** instaliuota arba MongoDB Atlas paskyra
+- **npm** arba **yarn** paketų tvarkyklė
+
+## Projekto Klonavimas
+
 Projektą galite klonuoti iš GitHub naudodami šią komandą:
 
-bash
-Copy code
+```bash
 git clone https://github.com/Cepvai/Galutinis-Atsiskaitymas.git
-Po projekto klonavimo vykdykite toliau nurodytus nustatymų žingsnius tiek frontend, tiek backend dalims.
 
 Frontend (Klientinės dalies) Nustatymai
 Tech Stack
@@ -45,7 +49,7 @@ Paleiskite vystymo serverį:
 bash
 Copy code
 npm run dev
-Aplikacija paleista adresu http://localhost:5173, jei nenustatyta kitaip.
+Aplikacija paleista adresu http://localhost:5173.
 
 Backend (Serverio dalies) Nustatymai
 Tech Stack
@@ -81,6 +85,14 @@ DB_USER=<jūsų_DB_vartotojas>
 DB_PASSWORD=<jūsų_DB_slaptažodis>
 DB_CLUSTER=<jūsų_cluster_pavadinimas>
 DB_NAME=<jūsų_duomenų_bazės_pavadinimas>
+Aplinkos kintamieji:
+
+SERVER_PORT: Uostas, kuriame veiks Express serveris (numatytas 5500).
+CLIENT_PORT: Uostas, kuriame veikia frontend serveris (numatytas 5173).
+DB_USER: MongoDB vartotojo vardas.
+DB_PASSWORD: MongoDB vartotojo slaptažodis.
+DB_CLUSTER: MongoDB Atlas cluster pavadinimas.
+DB_NAME: MongoDB duomenų bazės pavadinimas.
 Įsitikinkite, kad MongoDB prisijungimo duomenys užpildyti teisingai.
 
 Paleiskite serverį:
@@ -88,7 +100,7 @@ Paleiskite serverį:
 bash
 Copy code
 npm run dev
-Serveris bus pasiekiamas http://localhost:5500.
+Serveris bus pasiekiamas http://localhost:5500, jei nenustatyta kitaip.
 
 Vystymas
 Aplankų Struktūra
