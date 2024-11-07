@@ -4,120 +4,113 @@
 
 ## Turinys
 
-1. [Pokalbių Sistema](#pokalbių-sistema)
-2. [Reikalavimai](#reikalavimai)
-3. [Projekto Klonavimas](#projekto-klonavimas)
-4. [Frontend (Klientinės dalies) Nustatymai](#frontend-klientinės-dalies-nustatymai)
-5. [Backend (Serverio dalies) Nustatymai](#backend-serverio-dalies-nustatymai)
-6. [Vystymas](#vystymas)
-7. [Aplikacijos Paleidimas](#aplikacijos-paleidimas)
-8. [Komandos](#komandos)
-9. [Licencija](#licencija)
+1. Pokalbių Sistema  
+2. Reikalavimai  
+3. Projekto Klonavimas  
+4. Frontend (Klientinės dalies) Nustatymai  
+5. Backend (Serverio dalies) Nustatymai  
+6. Vystymas  
+7. Aplikacijos Paleidimas  
+8. Komandos  
+9. Licencija  
 
 ## Reikalavimai
 
-- **Node.js** (rekomenduojama v20.6.0 arba naujesnė)
-- **MongoDB** instaliuota arba MongoDB Atlas paskyra
-- **npm** arba **yarn** paketų tvarkyklė
+- Node.js (rekomenduojama v20.6.0 arba naujesnė)  
+- MongoDB instaliuota arba MongoDB Atlas paskyra  
+- npm arba yarn paketų tvarkyklė  
 
 ## Projekto Klonavimas
 
-Projektą galite klonuoti iš GitHub naudodami šią komandą:
-
-```bash
+Projektą galite klonuoti iš GitHub naudodami šią komandą:  
 git clone https://github.com/Cepvai/Galutinis-Atsiskaitymas.git
 
-Frontend (Klientinės dalies) Nustatymai
-Tech Stack
-React
-React Router DOM
-Styled Components
-Vite
-Frontend Paleidimo Žingsniai
-Pereikite į klientinės dalies aplanką:
+## Frontend (Klientinės dalies) Nustatymai
 
-bash
-Copy code
-cd client
-Įdiekite priklausomybes:
+Tech Stack:  
+- React  
+- React Router DOM  
+- Styled Components  
+- Vite  
 
-bash
-Copy code
-npm install
-Paleiskite vystymo serverį:
+Frontend Paleidimo Žingsniai:  
+1. Pereikite į klientinės dalies aplanką:  
+   cd client  
 
-bash
-Copy code
-npm run dev
-Aplikacija paleista adresu http://localhost:5173.
+2. Įdiekite priklausomybes:  
+   npm install  
 
-Backend (Serverio dalies) Nustatymai
-Tech Stack
-Express
-MongoDB
-CORS
-Aplinkos kintamieji
-Reikalavimai
-Node.js v20.6.0 arba naujesnė versija
-Backend Paleidimo Žingsniai
-Pereikite į serverio dalies aplanką:
+3. Paleiskite vystymo serverį:  
+   npm run dev  
 
-bash
-Copy code
-cd server
-Įdiekite priklausomybes:
+   Aplikacija paleista adresu http://localhost:5173.
 
-bash
-Copy code
-npm install
-Nukopijuokite pateiktą .env.example failą ir pervadinkite jį į .env:
+## Backend (Serverio dalies) Nustatymai
 
-bash
-Copy code
-cp .env.example .env
-Redaguokite .env failą su savo konfigūracijos informacija:
+Tech Stack:  
+- Express  
+- MongoDB  
+- CORS  
 
-plaintext
-Copy code
-SERVER_PORT=5001
-CLIENT_PORT=5173
-DB_USER=<jūsų_DB_vartotojas>
-DB_PASSWORD=<jūsų_DB_slaptažodis>
-DB_CLUSTER=<jūsų_cluster_pavadinimas>
-DB_NAME=<jūsų_duomenų_bazės_pavadinimas>
-Aplinkos kintamieji:
+Aplinkos kintamieji:  
 
-SERVER_PORT: Uostas, kuriame veiks Express serveris (numatytas 5500).
-CLIENT_PORT: Uostas, kuriame veikia frontend serveris (numatytas 5173).
-DB_USER: MongoDB vartotojo vardas.
-DB_PASSWORD: MongoDB vartotojo slaptažodis.
-DB_CLUSTER: MongoDB Atlas cluster pavadinimas.
-DB_NAME: MongoDB duomenų bazės pavadinimas.
+Reikalavimai:  
+- Node.js v20.6.0 arba naujesnė versija  
+
+Backend Paleidimo Žingsniai:  
+1. Pereikite į serverio dalies aplanką:  
+   cd server  
+
+2. Įdiekite priklausomybes:  
+   npm install  
+
+3. Nukopijuokite pateiktą .env.example failą ir pervadinkite jį į .env:  
+   cp .env.example .env  
+
+4. Redaguokite .env failą su savo konfigūracijos informacija:  
+   SERVER_PORT=5001  
+   CLIENT_PORT=5173  
+   DB_USER=<jūsų_DB_vartotojas>  
+   DB_PASSWORD=<jūsų_DB_slaptažodis>  
+   DB_CLUSTER=<jūsų_cluster_pavadinimas>  
+   DB_NAME=<jūsų_duomenų_bazės_pavadinimas>  
+
+Aplinkos kintamieji:  
+- SERVER_PORT: Uostas, kuriame veiks Express serveris (numatytas 5500).  
+- CLIENT_PORT: Uostas, kuriame veikia frontend serveris (numatytas 5173).  
+- DB_USER: MongoDB vartotojo vardas.  
+- DB_PASSWORD: MongoDB vartotojo slaptažodis.  
+- DB_CLUSTER: MongoDB Atlas cluster pavadinimas.  
+- DB_NAME: MongoDB duomenų bazės pavadinimas.  
+
 Įsitikinkite, kad MongoDB prisijungimo duomenys užpildyti teisingai.
 
-Paleiskite serverį:
+5. Paleiskite serverį:  
+   npm run dev  
 
-bash
-Copy code
-npm run dev
-Serveris bus pasiekiamas http://localhost:5500, jei nenustatyta kitaip.
+   Serveris bus pasiekiamas http://localhost:5500, jei nenustatyta kitaip.
 
-Vystymas
-Aplankų Struktūra
-client/src/components:
-molecules: Pakartotinai naudojami komponentai, tokie kaip pokalbių kortelės, filtras, puslapiavimas.
-organisms: Pagrindinės komponentės kaip „Visi vartotojai“ ir „Pokalbiai“, naudojamos su antraštėmis ir šablonais.
-server/: Express maršrutas, index.ts API užklausoms tvarkyti.
-Aplikacijos Paleidimas
-Įsitikinkite, kad frontend ir backend serveriai yra paleisti:
+## Vystymas
 
-Frontend adresu http://localhost:5173
-Backend adresu http://localhost:5500
+Aplankų Struktūra:  
+- client/src/components:  
+  - molecules: Pakartotinai naudojami komponentai, tokie kaip pokalbių kortelės, filtras, puslapiavimas.  
+  - organisms: Pagrindinės komponentės kaip „Visi vartotojai“ ir „Pokalbiai“, naudojamos su antraštėmis ir šablonais.  
+- server/: Express maršrutas, index.ts API užklausoms tvarkyti.  
+
+## Aplikacijos Paleidimas
+
+Įsitikinkite, kad frontend ir backend serveriai yra paleisti:  
+- Frontend adresu: http://localhost:5173  
+- Backend adresu: http://localhost:5500  
+
 Kliento aplikacija naudoja serverio API užklausas pokalbių ir vartotojų duomenims gauti.
 
-Komandos
-Frontend:
-npm run dev: Paleidžia Vite vystymo serverį.
-npm run build: Sukuria gamybai paruoštus failus.
-Backend:
-npm run dev: Paleidžia Express serverį naudojant .env konfigūraciją.
+## Komandos
+
+Frontend:  
+- npm run dev: Paleidžia Vite vystymo serverį.  
+- npm run build: Sukuria gamybai paruoštus failus.  
+
+Backend:  
+- npm run dev: Paleidžia Express serverį naudojant .env konfigūraciją.  
